@@ -1,0 +1,43 @@
+# 🏗 Node.js Abhängigkeiten
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+.npm/
+
+# 🚀 Build- und Log-Dateien
+dist/
+build/
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+debug.log*
+.out
+.DS_Store
+
+# ⚙️ Umgebungsvariablen (Sensible Daten)
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# 🔥 Temporary / Cache Dateien
+.cache/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ⚡ Sequelize & Datenbank-Migrationsdateien
+db/migrations/
+db/seeders/
+database.sqlite
+database.sqlite-journal
+
+# 📸 Sonstiges
+coverage/
+*.pid
+*.seed
+*.pid.lock
