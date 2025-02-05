@@ -9,7 +9,12 @@ function create_user() {
   read email
   echo "Passwort des Benutzers:"
   read password
-  
+
+  if [[ -z "$name" || -z "$email" || -z "$password" ]]; then
+    echo "❌ Fehler: Alle Felder müssen ausgefüllt sein!"
+    return
+  fi
+
   curl -X POST "$BASE_URL/users" \
     -H "Content-Type: application/json" \
     -d "{\"name\": \"$name\", \"email\": \"$email\", \"password\": \"$password\"}"
@@ -22,13 +27,24 @@ function get_users() {
 function delete_user() {
   echo "ID des Benutzers, den du löschen möchtest:"
   read user_id
+
+  if [[ -z "$user_id" ]]; then
+    echo "❌ Fehler: Benutzer-ID darf nicht leer sein!"
+    return
+  fi
+
   curl -X DELETE "$BASE_URL/users/$user_id"
 }
 
 function create_category() {
   echo "Name der Kategorie:"
   read category_name
-  
+
+  if [[ -z "$category_name" ]]; then
+    echo "❌ Fehler: Kategoriename darf nicht leer sein!"
+    return
+  fi
+
   curl -X POST "$BASE_URL/categories" \
     -H "Content-Type: application/json" \
     -d "{\"name\": \"$category_name\"}"
@@ -43,11 +59,16 @@ function create_product() {
   read product_name
   echo "Produktbeschreibung:"
   read description
-  echo "Preis:"
+  echo "Preis (Nur Zahl, keine Währung!):"
   read price
   echo "Kategorie-ID:"
   read category_id
-  
+
+  if [[ -z "$product_name" || -z "$description" || -z "$price" || -z "$category_id" ]]; then
+    echo "❌ Fehler: Alle Felder müssen ausgefüllt sein!"
+    return
+  fi
+
   curl -X POST "$BASE_URL/products" \
     -H "Content-Type: application/json" \
     -d "{\"name\": \"$product_name\", \"description\": \"$description\", \"price\": $price, \"categoryId\": $category_id}"
@@ -64,10 +85,18 @@ function create_order() {
   read product_id
   echo "Anzahl:"
   read quantity
-  
+
+  if [[ -z "$user_id" || -z "$product_id" || -z "$quantity" ]]; then
+    echo "❌ Fehler: Alle Felder müssen ausgefüllt sein!"
+    return
+  fi
+
+  # Simulierter Preis pro Produkt: 100 (Kann später durch eine echte DB-Abfrage ersetzt werden)
+  total=$(echo "$quantity * 100" | bc)
+
   curl -X POST "$BASE_URL/orders" \
     -H "Content-Type: application/json" \
-    -d "{\"userId\": $user_id, \"products\": [{\"productId\": $product_id, \"quantity\": $quantity}]}"
+    -d "{\"userId\": $user_id, \"products\": [{\"productId\": $product_id, \"quantity\": $quantity}], \"total\": $total}"
 }
 
 function get_orders() {
@@ -76,7 +105,7 @@ function get_orders() {
 
 function show_menu() {
   echo "-----------------------------------"
-  echo " API Test Menü"
+  echo " 🛒 API Test Menü"
   echo "-----------------------------------"
   echo "1. Neuen Benutzer erstellen"
   echo "2. Alle Benutzer anzeigen"
@@ -106,7 +135,7 @@ while true; do
     8) create_order ;;
     9) get_orders ;;
     10) echo "Beende das Skript"; exit ;;
-    *) echo "Ungültige Eingabe! Bitte eine Zahl zwischen 1 und 10 wählen." ;;
+    *) echo "❌ Ungültige Eingabe! Bitte eine Zahl zwischen 1 und 10 wählen." ;;
   esac
   echo ""
 done
