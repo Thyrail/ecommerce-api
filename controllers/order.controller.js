@@ -8,6 +8,7 @@ export const getOrders = async (req, res) =>
         res.json(orders);
     } catch (error)
     {
+        console.error(error);
         res.status(500).json({ error: 'Error fetching orders' });
     }
 };
@@ -17,10 +18,15 @@ export const getOrderById = async (req, res) =>
     try
     {
         const order = await Order.findByPk(req.params.id);
-        if (!order) return res.status(404).json({ error: 'Order not found' });
+        if (!order)
+        {
+            return res.status(404).json({ error: 'Order not found' });
+        }
+
         res.json(order);
     } catch (error)
     {
+        console.error(error);
         res.status(500).json({ error: 'Error fetching order' });
     }
 };
@@ -30,10 +36,22 @@ export const createOrder = async (req, res) =>
     try
     {
         const { userId, products, total } = req.body;
-        const newOrder = await Order.create({ userId, total });
+
+        if (!Array.isArray(products))
+        {
+            return res.status(400).json({ error: 'Products must be an array' });
+        }
+
+        const newOrder = await Order.create({
+            userId,
+            products, //:JSON.stringify(products),
+            total
+        });
+
         res.status(201).json(newOrder);
     } catch (error)
     {
+        console.error(error);
         res.status(500).json({ error: 'Error creating order' });
     }
 };
